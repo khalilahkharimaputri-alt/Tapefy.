@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TapeNusantara - Premium & Autentik</title>
+
+<style>
+/* PALETTE: Coklat Muda Soft */
+:root {
+    --bg-color: #fdf8f4;
+    --primary-brown: #a67c52;
+    --light-brown: #d7b98e;
+    --soft-brown: #efe3d0;
+    --text-dark: #4a3728;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body{background: var(--bg-color); color: var(--text-dark);}
+
+/* HEADER */
+header{
+    position:fixed;top:0;width:100%;
+    background:white;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 25px;
+    box-shadow:0 2px 10px rgba(166, 124, 82, 0.1);
+    z-index:100;
+}
+
+.nav a{margin:0 10px;cursor:pointer;color:var(--text-dark);text-decoration:none;font-weight:500;}
+.nav a:hover{color: var(--primary-brown);}
+
+.love{cursor:pointer;font-size:20px; margin-right: 15px;}
+
+/* PAGE CONTROL */
+.page{display:none; padding-top: 70px;}
+.page.active{display:block;}
+
+/* BACK BUTTON STYLE */
+.back-nav {
+    padding: 10px 25px;
+    display: flex;
+    align-items: center;
+}
+.btn-back {
+    background: none;
+    border: none;
+    color: var(--primary-brown);
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-back:hover { color: var(--light-brown); }
+
+/* HOME STYLES */
+.container{ height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory; }
+.snap{ height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; scroll-snap-align:start; padding: 20px;}
+
+.hero{
+    background: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+    url('img/cover baru.jpeg') center/cover;
+    color: white;
+}
+
+.social-icons { margin-top: 20px; font-size: 24px; }
+.social-icons span { margin: 0 15px; cursor: pointer; transition: 0.3s; }
+.social-icons span:hover { color: var(--light-brown); }
+
+/* BUTTONS */
+.btn{
+    margin-top:15px; padding:10px 25px;
+    background: var(--primary-brown);
+    color:white; border:none; border-radius:25px;
+    cursor:pointer; transition: 0.3s;
+}
+.btn:hover{ background: var(--light-brown); }
+
+/* PRODUK CARDS */
+.feed{ display:flex; flex-wrap:wrap; justify-content:center; padding:20px; }
+.card{
+    width:260px; margin:15px; background:white;
+    border-radius:15px; overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05); text-align:center;
+    padding-bottom: 15px; position: relative;
+}
+.card img{ width:100%; height:160px; object-fit:cover; }
+.card h3 { margin: 10px 0; }
+.qty-control { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+.btn-qty { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-brown); background: white; cursor: pointer; }
+
+.fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; border:none; }
+
+/* BOX CONTAINERS */
+.center-box{ display:flex; justify-content:center; align-items:center; min-height:80vh; }
+.cart-box{
+    width:95%; max-width:500px; background:white;
+    padding:30px; border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+input, select, textarea{ width:100%; margin:8px 0; padding:12px; border-radius:10px; border:1px solid var(--soft-brown); background: #fffcf9; }
+
+/* FLOAT CART */
+.cart-float{
+    position:fixed; bottom:30px; right:30px;
+    background: var(--primary-brown); color:white;
+    width: 60px; height: 60px; border-radius:50%;
+    display: flex; justify-content: center; align-items: center;
+    cursor:pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 99;
+}
+
+.payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.pay-btn { padding: 10px; border: 1px solid var(--light-brown); border-radius: 10px; background: white; cursor: pointer; text-align: center; font-size: 0.9rem; }
+.pay-btn:hover, .pay-btn.selected { background: var(--soft-brown); border-color: var(--primary-brown); }
+
+/* INVOICE SPECIFIC */
+.invoice-detail { font-size: 0.85rem; border: 1px dashed var(--light-brown); padding: 15px; border-radius: 10px; background: #fff; text-align: left; }
+.invoice-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.line { border-top: 1px dashed #ccc; margin: 10px 0; }
+
+/* PAYMENT INTERFACE ADDITIONS */
+.pay-action-box { background: #fdf8f4; border: 1px solid var(--light-brown); padding: 15px; border-radius: 10px; margin-top: 15px; }
+#qrisContainer img { width: 150px; height: 150px; margin: 10px 0; }
+
+</style>
+</head>
+
+<body>
+
+<header>
+<b style="color: var(--primary-brown); font-size: 1.2rem; cursor:pointer;" onclick="showPage('home')">Tapefy.</b>
+
+<div class="nav">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('about')">About Us</a>
+    <a onclick="showPage('produk')">Product</a>
+    <a onclick="showPage('contact')">Contact Us</a>
+</div>
+
+<div style="display: flex; align-items: center;">
+    <span class="love" onclick="showPage('favorit')" style="cursor:pointer;">❤️</span>
+    <span onclick="showPage('cart')" style="cursor:pointer;">🛒 <span id="cartCount">0</span></span>
+</div>
+</header>
+
+<div id="home" class="page active" style="padding-top:0;">
+    <div class="container">
+        <section class="snap hero">
+            <h1>Tapefy.</h1>
+            <p>Warisan Rasa Autentik & Tekstur Lembut</p>
+            <button class="btn" onclick="showPage('produk')">Mulai Belanja</button>
+        </section>
+
+        <section class="snap" style="background-color: white;">
+            <h2>Katalog Unggulan</h2>
+            <div class="feed" id="homeKatalog"></div>
+            <button class="btn" onclick="showPage('produk')">Lihat Semua Katalog</button>
+        </section>
+
+        <section class="snap" style="background-color: var(--soft-brown);">
+            <h2>Kenapa Memilih Kami?</h2>
+            <p style="max-width: 600px; margin-top: 15px;">Kami menggunakan singkong pilihan dari petani lokal, diproses secara higienis tanpa bahan pengawet untuk menjaga kemurnian rasa tradisional.</p>
+        </section>
+
+        <section class="snap">
+            <h2>Our Social Media</h2>
+            <p>Ikuti perjalanan rasa kami di platform digital</p>
+            <div class="social-icons">
+                <span>📸 Instagram :@Tapefy.</span>
+                <span>🐦 Twitter :@Tapefy.</span>
+                <span>🎥 TikTok :@Tapefy.</span>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div id="about" class="page">
+    <div class="back-nav"><button class="btn-back" onclick="goBack()">← Kembali</button></div>
+    <div class="center-box">
+        <div class="cart-box" style="text-align: center;">
+            <h2>Tentang Kami</h2>
+            <p style="margin-top: 15px; line-height: 1.6;">Tapefey. lahir dari keinginan untuk mengangkat camilan tradisional Indonesia ke level premium. Kami percaya bahwa kelezatan sejati berasal dari kesabaran proses fermentasi yang alami.</p>
+            <button class="btn" onclick="showPage('produk')">Lihat Produk</button>
+        </div>
+    </div>
+</div>
+
+<div id="produk" class="page">
+    <div class="back-nav"><button class="btn-back" onclick="goBack()">← Kembali</button></div>
+    <h2 style="text-align: center; margin-top: 10px;">Katalog Produk</h2>
+    <div class="feed" id="produkList"></div>
+    <div class="cart-float" onclick="showPage('cart')">🛒</div>
+</div>
+
+<div id="favorit" class="page">
+    <div class="back-nav"><button class="btn-back" onclick="goBack()">← Kembali</button></div>
+    <h2 style="text-align: center; margin-top: 10px;">Produk Favorit</h2>
+    <div class="feed" id="favoritList"></div>
+    <div id="emptyFav" style="text-align:center; display:none; padding: 50px;">
+        <p>Belum ada produk favorit.</p>
+    </div>
+</div>
+
+<div id="contact" class="page">
+    <div class="back-nav"><button class="btn-back" onclick="goBack()">← Kembali</button></div>
+    <div class="center-box">
+        <div class="cart-box" style="text-align: center;">
+            <h2>Contact Us</h2>
+            <p style="margin-top:15px;">Jika ada kendala atau mau konsultasi terlebih dahulu bisa chat ke admin.</p>
+            <button class="btn" style="background: #25D366;" onclick="window.open('https://wa.me/6281292882885')">Chat WhatsApp</button>
+        </div>
+    </div>
+</div>
+
+<div id="cart" class="page">
+    <div class="back-nav"><button class="btn-back" onclick="goBack()">← Kembali</button></div>
+    <div class="center-box">
+        <div class="cart-box">
+            <h2>Keranjang Belanja</h2>
+            <div id="cartList" style="margin-top: 15px;"></div>
+            <div style="margin-top: 20px; text-align: right;">
+                <h3 style="color: var(--primary-brown);">Total: Rp <span id="totalCart">0</span></h3>
+                <button class="btn" style="width: 100%;" onclick="showPage('checkout')">Lanjut ke Checkout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="checkout" class="page">
+    <div class="back-nav"><button class="btn-back" onclick="goBack()">← Kembali</button></div>
+    <div class="center-box">
+        <div class="cart-box">
+            <h2 style="margin-bottom: 10px;">Ringkasan Order</h2>
+            
+            <div id="checkoutProductList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; border-bottom: 1px solid #eee;"></div>
+
+            <h3>Detail Pengiriman</h3>
+            <input type="text" placeholder="Nama Lengkap" id="nama">
+            <textarea placeholder="Alamat Lengkap" id="alamat" rows="2"></textarea>
+            <select id="kurir">
+                <option value="">Pilih Jasa Pengiriman</option>
+                <option>J&T Express</option>
+                <option>JNE Regular</option>
+                <option>SiCepat</option>
+                <option>Paxel</option>
+            </select>
+
+            <h3 style="margin-top: 15px;">Metode Pembayaran</h3>
+            <div class="payment-options">
+                <div class="pay-btn" onclick="selectPayment(this)">Transfer Bank</div>
+                <div class="pay-btn" onclick="selectPayment(this)">QRIS</div>
+                <div class="pay-btn" onclick="selectPayment(this)">E-Wallet</div>
+                <div class="pay-btn" onclick="selectPayment(this)">COD</div>
+            </div>
+
+            <div style="margin-top: 20px; background: var(--soft-brown); padding: 15px; border-radius: 10px;">
+                <p style="display:flex; justify-content:space-between;"><span>Subtotal:</span> <span>Rp <span id="checkoutSubtotal">0</span></span></p>
+                <p style="display:flex; justify-content:space-between; font-weight:bold; margin-top:5px; color: var(--primary-brown);"><span>Total Bayar:</span> <span>Rp <span id="checkoutTotalFinal">0</span></span></p>
+            </div>
+
+            <button class="btn" style="width: 100%; margin-top:15px;" onclick="prosesBayar()">Konfirmasi Pembayaran</button>
+        </div>
+    </div>
+</div>
+
+<div id="success" class="page">
+    <div class="center-box">
+        <div class="cart-box" style="text-align:center;">
+            <h1 id="successIcon" style="font-size: 50px;">✅</h1>
+            <h2 id="successTitle">Pembayaran Berhasil</h2>
+            <p id="successMsg" style="margin: 10px 0; font-size: 0.9rem;">Pesanan Anda sedang diproses.</p>
+            
+            <div id="paymentActionArea"></div>
+
+            <div id="invoiceRingkasan" class="invoice-detail"></div>
+
+            <button class="btn" style="width: 100%; margin-top: 15px;" onclick="showPage('feedbackPage')">Lanjut ke Kritik & Saran</button>
+        </div>
+    </div>
+</div>
+
+<div id="feedbackPage" class="page">
+    <div class="center-box">
+        <div class="cart-box" style="text-align:center;">
+            <h2>Kritik & Saran</h2>
+            <p style="margin-bottom: 15px;">Masukan Anda membantu kami menjadi lebih baik.</p>
+            <input type="text" id="namaSaran" placeholder="Nama Anda">
+            <textarea id="pesanSaran" placeholder="Tuliskan masukan Anda di sini..." rows="4"></textarea>
+            <button class="btn" style="width: 100%;" onclick="kirimSaran()">Kirim Feedback</button>
+        </div>
+    </div>
+</div>
+
+<div id="endPage" class="page">
+    <div class="center-box">
+        <div class="cart-box" style="text-align:center;">
+            <h1 style="font-size: 60px;">🙏</h1>
+            <h2>Terima Kasih Banyak!</h2>
+            <p style="margin: 20px 0; line-height: 1.6;">
+                Dukungan Anda sangat berarti bagi kelangsungan UMKM lokal seperti kami. 
+                Semoga TapeNusantara bisa memberikan keceriaan di setiap gigitannya!
+            </p>
+            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+                <p style="font-style: italic; color: var(--primary-brown);">Sampai jumpa di pesanan berikutnya!</p>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 25px;" onclick="kembaliHome()">Selesai & Kembali ke Beranda</button>
+        </div>
+    </div>
+</div>
+<script>
+let produkData=[
+    {id: 0, nama:"Bolu Tape Original", harga:20000, img:"img/image_d28d14b5.png", fav: false},
+    {id: 1, nama:"Bolu Tape Premium gift", harga:30000, img:"img/Gemini_Generated_Image_hepi22hepi22hepi.png", fav: false},
+    {id: 2, nama:"Churros Tape", harga:22000, img:"img/churros.png", fav: false},
+    {id: 3, nama:"Tape Aroma", harga:18000, img:"img/tape aroma.png", fav: false},
+    {id: 4, nama:"Creme Brulee Tape", harga:25000, img:"img/creme bule.png", fav: false}
+];
+
+let cart=[];
+let historyPages = ['home']; // Menyimpan riwayat navigasi
+let selectedPaymentMethod = "";
+let qrisTimer;
+
+window.onload = () => { tampilHomeKatalog(); };
+
+function showPage(id){
+    // Tambahkan ke history jika ID berbeda dari halaman saat ini
+    const currentPage = historyPages[historyPages.length - 1];
+    if (currentPage !== id) {
+        historyPages.push(id);
+    }
+
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+    
+    if(id==='produk') tampilProduk();
+    if(id==='cart') tampilCart();
+    if(id==='checkout') tampilCheckout();
+    if(id==='favorit') tampilFavorit();
+}
+
+function goBack() {
+    if (historyPages.length > 1) {
+        historyPages.pop(); // Hapus halaman saat ini
+        const prevPage = historyPages[historyPages.length - 1];
+        
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById(prevPage).classList.add('active');
+        window.scrollTo(0,0);
+    } else {
+        showPage('home');
+    }
+}
+
+// SISA FUNGSI SAMA SEPERTI SEBELUMNYA
+function createCard(p) {
+    let itemInCart = cart.find(x => x.id === p.id);
+    let qty = itemInCart ? itemInCart.qty : 0;
+    return `
+    <div class="card">
+        <button class="fav-btn" onclick="toggleFav(${p.id})">${p.fav ? '❤️' : '🤍'}</button>
+        <img src="${p.img}">
+        <h3>${p.nama}</h3>
+        <p style="font-weight: bold; color: var(--primary-brown);">Rp ${p.harga.toLocaleString()}</p>
+        <div class="qty-control">
+            ${qty > 0 ? `
+                <button class="btn-qty" onclick="ubahQtyManual(${p.id}, -1)">-</button>
+                <span>${qty}</span>
+                <button class="btn-qty" onclick="ubahQtyManual(${p.id}, 1)">+</button>
+            ` : `
+                <button class="btn" style="margin-top:5px" onclick="tambahCart(${p.id})">Beli</button>
+            `}
+        </div>
+    </div>`;
+}
+
+function tampilHomeKatalog(){
+    let html = "";
+    for(let i=0; i<3; i++) { html += createCard(produkData[i]); }
+    document.getElementById('homeKatalog').innerHTML = html;
+}
+
+function tampilProduk(){
+    let html="";
+    produkData.forEach(p => html += createCard(p));
+    document.getElementById('produkList').innerHTML=html;
+}
+
+function tampilFavorit() {
+    let favs = produkData.filter(p => p.fav);
+    let html = "";
+    if(favs.length === 0) {
+        document.getElementById('emptyFav').style.display = "block";
+    } else {
+        document.getElementById('emptyFav').style.display = "none";
+        favs.forEach(p => html += createCard(p));
+    }
+    document.getElementById('favoritList').innerHTML = html;
+}
+
+function toggleFav(id) {
+    produkData[id].fav = !produkData[id].fav;
+    tampilProduk(); tampilFavorit(); tampilHomeKatalog();
+}
+
+function tambahCart(id){
+    let p = produkData.find(x => x.id === id);
+    let item = cart.find(x => x.id === id);
+    if(!item) cart.push({...p, qty:1});
+    updateCart(); tampilProduk(); tampilHomeKatalog();
+}
+
+function ubahQtyManual(id, val){
+    let item = cart.find(x => x.id === id);
+    if(item){
+        item.qty += val;
+        if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
+    }
+    updateCart(); tampilProduk(); tampilHomeKatalog();
+    if(document.getElementById('checkout').classList.contains('active')) tampilCheckout();
+}
+
+function hapusItemCheckout(id) {
+    cart = cart.filter(x => x.id !== id);
+    updateCart();
+    tampilCheckout();
+}
+
+function updateCart(){
+    let count = cart.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('cartCount').innerText = count;
+}
+
+function tampilCart(){
+    let html="", total=0;
+    if(cart.length === 0){
+        html = "<p style='text-align:center;'>Keranjang kosong.</p>";
+    } else {
+        cart.forEach((i)=>{
+            let sub = i.harga * i.qty; total += sub;
+            html += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
+                <span>${i.nama} (x${i.qty})</span>
+                <span>Rp ${sub.toLocaleString()}</span>
+            </div>`;
+        });
+    }
+    document.getElementById('cartList').innerHTML=html;
+    document.getElementById('totalCart').innerText=total.toLocaleString();
+}
+
+function tampilCheckout() {
+    let html = "", total = 0;
+    if (cart.length === 0) {
+        html = "<p style='text-align:center;'>Keranjang kosong.</p>";
+    } else {
+        cart.forEach((i) => {
+            let sub = i.harga * i.qty;
+            total += sub;
+            html += `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f9f9f9;">
+                <div style="flex:1;"><b style="font-size:0.85rem;">${i.nama}</b><br><small>Rp ${i.harga.toLocaleString()}</small></div>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <button class="btn-qty" style="width:24px; height:24px;" onclick="ubahQtyManual(${i.id}, -1)">-</button>
+                    <span>${i.qty}</span>
+                    <button class="btn-qty" style="width:24px; height:24px;" onclick="ubahQtyManual(${i.id}, 1)">+</button>
+                    <button onclick="hapusItemCheckout(${i.id})" style="background:none; border:none; cursor:pointer; margin-left:5px;">🗑️</button>
+                </div>
+            </div>`;
+        });
+    }
+    document.getElementById('checkoutProductList').innerHTML = html;
+    document.getElementById('checkoutSubtotal').innerText = total.toLocaleString();
+    document.getElementById('checkoutTotalFinal').innerText = total.toLocaleString();
+}
+
+function selectPayment(el){
+    document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPaymentMethod = el.innerText;
+}
+
+function startQrisTimer() {
+    let timeLeft = 1800;
+    const timerEl = document.getElementById('qrisTimer');
+    clearInterval(qrisTimer);
+    qrisTimer = setInterval(() => {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        timerEl.innerText = `${m}:${s < 10 ? '0' + s : s}`;
+        if (timeLeft <= 0) clearInterval(qrisTimer);
+        timeLeft--;
+    }, 1000);
+}
+
+function copyRekening(norek) {
+    navigator.clipboard.writeText(norek);
+    alert("Nomor Rekening Berhasil Disalin!");
+}
+
+function prosesBayar(){
+    const nama = document.getElementById('nama').value;
+    const alamat = document.getElementById('alamat').value;
+    const kurir = document.getElementById('kurir').value;
+
+    if(!nama || !selectedPaymentMethod || cart.length === 0) {
+        return alert("Harap lengkapi Nama, Produk, dan Metode Pembayaran!");
+    }
+    
+    let orderID = "INV-" + Math.floor(Math.random() * 90000 + 10000);
+    let date = new Date().toLocaleString('id-ID');
+    let total = 0;
+    
+    let payActionHtml = "";
+    const successTitle = document.getElementById('successTitle');
+    const successIcon = document.getElementById('successIcon');
+    const successMsg = document.getElementById('successMsg');
+
+    if(selectedPaymentMethod === "Transfer Bank") {
+        const norek = "1234567890";
+        successTitle.innerText = "Selesaikan Pembayaran";
+        successMsg.innerText = "Silakan transfer ke nomor rekening berikut:";
+        payActionHtml = `<div class="pay-action-box"><p><b>Bank BCA (Tape Nusantara)</b></p><p style="font-size: 1.2rem; color: var(--primary-brown); margin: 5px 0;">${norek} <button class="btn" style="padding:4px 10px; font-size:10px;" onclick="copyRekening('${norek}')">SALIN</button></p></div>`;
+    } else if(selectedPaymentMethod === "QRIS") {
+        successTitle.innerText = "Scan QRIS Anda";
+        successMsg.innerText = "Scan kode di bawah ini.";
+        payActionHtml = `<div class="pay-action-box" id="qrisContainer"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TAPE_PAY" alt="QRIS"><p style="color:red; font-weight:bold;">Berlaku: <span id="qrisTimer">30:00</span></p></div>`;
+        setTimeout(startQrisTimer, 100);
+    } else if(selectedPaymentMethod === "E-Wallet") {
+        successTitle.innerText = "Verifikasi E-Wallet";
+        successMsg.innerText = "Cek notifikasi di aplikasi E-Wallet Anda.";
+    } else if(selectedPaymentMethod === "COD") {
+        successTitle.innerText = "Pesanan Diproses";
+        successMsg.innerText = "Siapkan uang pas saat kurir mengantarkan paket Anda.";
+    }
+
+    document.getElementById('paymentActionArea').innerHTML = payActionHtml;
+    historyPages = ['home']; // Reset history setelah pembayaran berhasil
+    
+    let html = `
+        <div style="text-align:center; margin-bottom:10px;"><b>INVOICE TAPE NUSANTARA</b><br><small>ID: ${orderID}</small></div>
+        <div class="line"></div>
+        <p><b>Penerima:</b> ${nama}</p>
+        <div class="line"></div>
+    `;
+
+    cart.forEach(i => {
+        let sub = i.harga * i.qty;
+        total += sub;
+        html += `<div class="invoice-row"><span>${i.nama} x${i.qty}</span><span>Rp ${sub.toLocaleString()}</span></div>`;
+    });
+
+    html += `<div class="line"></div><div class="invoice-row" style="font-weight:bold;"><span>TOTAL</span><span>Rp ${total.toLocaleString()}</span></div>`;
+
+    document.getElementById('invoiceRingkasan').innerHTML = html;
+    showPage('success');
+}
+
+function kirimSaran(){ showPage('endPage'); }
+
+function kembaliHome(){
+    clearInterval(qrisTimer);
+    cart=[]; 
+    updateCart(); 
+    historyPages = ['home'];
+    produkData.forEach(p => p.fav = false); 
+    document.getElementById('nama').value = "";
+    document.getElementById('alamat').value = "";
+    document.getElementById('kurir').value = "";
+    selectedPaymentMethod = "";
+    tampilHomeKatalog();
+    showPage('home');
+}
+</script>
+</body>
+</html>
